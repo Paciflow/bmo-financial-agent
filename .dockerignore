@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.git/
+.env
+*.log
+# The pre-built index (data/qdrant, data/bm25, data/processed, data/raw) is
+# deliberately INCLUDED in the image -- see docker/Dockerfile's explicit COPY
+# list. Only exclude things that shouldn't ship: the old pre-swap embedding
+# backup and eval scratch output.
+data/qdrant_minilm_backup/
+data/processed/eval/

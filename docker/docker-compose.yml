@@ -1,0 +1,12 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8501:8501"
+    env_file:
+      - ../.env
+    # No volume: the index is baked into the image at build time (see
+    # Dockerfile). Re-run `docker compose build` after re-ingesting to pick
+    # up fresh data.
