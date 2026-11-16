@@ -5,11 +5,12 @@ import json
 import logging
 from functools import lru_cache
 
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.responses import Response
 
 from bmo_agent.agent.graph import BMOAgent
 from bmo_agent.agent.llm import LLMNotConfiguredError
+from bmo_agent.api.rate_limit import enforce_rate_limit
 from bmo_agent.api.schemas import (
     ChatRequest,
     ChatResponse,
@@ -92,7 +93,7 @@ def _document_status(document_id: str) -> DocumentStatus:
     )
 
 
-@app.post("/chat", response_model=ChatResponse)
+@app.post("/chat", response_model=ChatResponse, dependencies=[Depends(enforce_rate_limit)])
 def chat(req: ChatRequest):
     try:
         agent = _get_agent()
@@ -105,7 +106,7 @@ def chat(req: ChatRequest):
     return ChatResponse(**result)
 
 
-@app.post("/retrieve", response_model=RetrieveResponse)
+@app.post("/retrieve", response_model=RetrieveResponse, dependencies=[Depends(enforce_rate_limit)])
 def retrieve(req: RetrieveRequest):
     retriever = _get_retriever()
     result = retriever.retrieve(req.query, use_rerank=req.use_rerank)
